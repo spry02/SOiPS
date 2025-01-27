@@ -18,33 +18,35 @@ add_game() {
             "Sport" "sport"\
             "Inne" "other")
         if [ $? -eq 0 ]; then
+            game_title=$(echo $game_title | sed 's/ /_/g')
             echo "$game_title - $game_genre" >> $data_games
-            dialog --msgbox "Pomyslnie dodano gre!" 6 30
+            dialog --msgbox "Pomyslnie dodano gre!" 0 0
         else
-            dialog --msgbox "Nie wybrano gatunku!" 6 30
+            dialog --msgbox "Nie wybrano gatunku!" 0 0
         fi
     else
-        dialog --msgbox "Nie podano tytulu!" 6 30
+        dialog --msgbox "Nie podano tytulu!" 0 0
     fi
 }
 
 #Usuwanie gry z biblioteki
 delete_game() {
     game=$1
-    dialog --yesno "Czy na pewno usunac gre: $game?" 6 30
+    dialog --yesno "Czy na pewno usunac gre: $game?" 0 0
     if [ $? -eq 0 ]; then
         sed -i "/$game/d" $data_games
-        dialog --msgbox "Gra usunieta pomyslnie!" 6 30
+        dialog --msgbox "Gra usunieta pomyslnie!" 0 0
         show_games
     fi
 }
 
 #Zarządzanie grami (przegladanie i usuwanie)
 show_games() {
-    games=$(cat $data_games)
-    games_list=$(awk -F ' - ' '{print $1 " " $2}' $data_games | tr '\n' ' ')
+    games=$(cat "$data_games")
+
+    games_list=$(awk -F ' - ' '{print NR " \" $1 "\" " $2}' "$data_games" | tr '\n' ' ')
     if [ -z "$games" ]; then
-        dialog --msgbox "Nie znaleziono gier!" 6 30
+        dialog --msgbox "Nie znaleziono gier!" 0 0
     else
         game=$(dialog --stdout --title "Gry" --menu "Wybierz gre" 0 0 0 $games_list)
         if [ $? -eq 0 ]; then
@@ -76,37 +78,41 @@ add_event() {
         if [ $? -eq 0 ]; then
             event_desc=$(dialog --stdout --title "Dodaj wydarzenie" --inputbox "Podaj opis wydarzenia" 0 0)
             if [ $? -eq 0 ]; then
+                event_desc=$(echo $event_desc | sed 's/ /_/g')
                 echo "$event_date - $event_game - $event_desc" >> $data_events
-                dialog --msgbox "Pomyslnie dodano wydarznie!" 6 30
+                dialog --msgbox "Pomyslnie dodano wydarzenie!" 0 0
             else
-                dialog --msgbox "Nie podano opisu!" 6 30
+                dialog --msgbox "Nie podano opisu!" 0 0
+            fi
         else
             #Wprowadzenie nazwy gry dla eventu w przypadku gry spoza biblioteki
-            dialog --stdout --title "Nie wybrano gry, podaj nazwe" --inputbox "Podaj nazwe gry" 6 30
+            event_game=$(dialog --stdout --title "Nie wybrano gry, podaj nazwe" --inputbox "Podaj nazwe gry" 0 0)
             if [ $? -eq 0 ]; then
                 event_desc=$(dialog --stdout --title "Dodaj wydarznie" --inputbox "Podaj opis wydarzenia" 0 0)
                 if [ $? -eq 0 ]; then
+                    event_game=$(echo $event_game | sed 's/ /_/g')
+                    event_desc=$(echo $event_desc | sed 's/ /_/g')
                     echo "$event_date - $event_game - $event_desc" >> $data_events
-                    dialog --msgbox "Pomyslnie dodano wydarzenie!" 6 30
+                    dialog --msgbox "Pomyslnie dodano wydarzenie!" 0 0
                 else
-                    dialog --msgbox "Nie podano opisu!" 6 30
+                    dialog --msgbox "Nie podano opisu!" 0 0
                 fi
             else
-                dialog --msgbox "Nie podano nazwy!" 6 30
+                dialog --msgbox "Nie podano nazwy!" 0 0
             fi
         fi
     else
-        dialog --msgbox "Nie wybrano daty!" 6 30
+        dialog --msgbox "Nie wybrano daty!" 0 0
     fi
 }
 
 #Usuwanie eventu
 delete_event() {
     event=$1
-    dialog --yesno "Czy na pewno usunac wydarzenie: $event?" 6 30
+    dialog --yesno "Czy na pewno usunac wydarzenie: $event?" 0 0
     if [ $? -eq 0 ]; then
         sed -i "/$event/d" $data_events
-        dialog --msgbox "Pomyslnie usunieto wydarzenie!" 6 30
+        dialog --msgbox "Pomyslnie usunieto wydarzenie!" 0 0
         show_events
     fi
 }
@@ -117,13 +123,13 @@ show_events() {
     if [ $? -eq 0 ]; then
         events=$(grep "$event_date" $data_events)
         if [ -z "$events" ]; then
-            dialog --msgbox "Brak wydarzen na wskazana date!" 6 30
+            dialog --msgbox "Brak wydarzen na wskazana date!" 0 0
         else
             event_list=$(echo "$events" | awk -F ' - ' '{print $3 " " $2}' | tr '\n' ' ')
             dialog --msgbox "$event_list" 0 0
-            event=$(dialog --stdout --title "Wydarzenia" --menu "Wybierz wydarzenie" 0 0 0 $event_list)
+            event=$(dialog --stdout --cancel-label "Powrot" --title "Wydarzenia" --menu "Wybierz wydarzenie" 0 0 0 $event_list)
             if [ $? -eq 0 ]; then
-                action=$(dialog --stdout --title "$event" --menu "Wybierz opcje" 0 0 0 \
+                action=$(dialog --stdout --cancel-label "Powrot" --title "$event" --menu "Wybierz opcje" 0 0 0 \
                     1 "Usun wydarzenie" \
                     2 "Powrot do wydarzen")
 
@@ -134,22 +140,22 @@ show_events() {
                 esac
 
             else
-                dialog --msgbox "Nie wybrano wydarzenia!" 6 30
+                dialog --msgbox "Nie wybrano wydarzenia!" 0 0
             fi
         fi
     else
-        dialog --msgbox "Nie wybrano daty!" 6 30
+        dialog --msgbox "Nie wybrano daty!" 0 0
     fi
 }
 
 
 # Menu główne
 main_menu() {
-    choice=$(dialog --stdout --title "Menu glowne" --menu "Choose an option" 0 0 0 \
-        1 "Game Library" \
-        2 "Game Events Calendar" \
-        3 "Clear program data" \
-        4 "Exit")
+    choice=$(dialog --stdout --cancel-label "Wyjscie" --title "Menu glowne" --menu "Wybierz opcje" 0 0 0 \
+        1 "Biblioteka gier" \
+        2 "Kalendarz wydarzeń" \
+        3 "Wyczyść dane programu" \
+        4 "Wyjscie")
 
     case $choice in
         1) game_menu ;;
@@ -164,16 +170,16 @@ main_menu() {
 
 #Menu biblioteki gier
 game_menu() {
-    choice=$(dialog --stdout --title "Biblioteka gier" --menu "Choose an option" 0 0 0 \
-        1 "Add Game" \
-        2 "Manage Games" \
-        3 "Return to main menu")
+    choice=$(dialog --stdout --cancel-label "Powrot" --title "Biblioteka gier" --menu "Wybierz opcje" 0 0 0 \
+        1 "Dodaj gre" \
+        2 "Zarzadzaj grami" \
+        3 "Powrot do menu glownego")
 
     case $choice in
         1) add_game ;;
         2) show_games ;;
         3) main_menu ;;
-        *) dialog --msgbox "Invalid option" 6 30 ;;
+        *) main_menu ;;
     esac
 
     game_menu
@@ -181,16 +187,16 @@ game_menu() {
 
 # Menu eventow
 event_menu() {
-    choice=$(dialog --stdout --title "Kalendarz wydarzen" --menu "Choose an option" 0 0 0 \
-        1 "Add Event" \
-        2 "Manage Events" \
-        3 "Return to main menu")
+    choice=$(dialog --stdout --cancel-label "Powrot" --title "Kalendarz wydarzen" --menu "Wybierz opcje" 0 0 0 \
+        1 "Dodaj wydarzenie" \
+        2 "Zarzadzaj wydarzeniami" \
+        3 "Powrot do menu glownego")
 
     case $choice in
         1) add_event ;;
         2) show_events ;;
         3) main_menu ;;
-        *) dialog --msgbox "Invalid option" 6 30 ;;
+        *) main_menu ;;
     esac
 
     event_menu
@@ -202,23 +208,25 @@ touch $data_games
 
 #Obsluga zamkniecia programu i usunięcia danych
 clear_data() {
-    dialog --yesno "Czy na pewno usunac wszystkie dane i opuscic program?" 6 30
+    dialog --yesno "Czy na pewno usunac wszystkie dane i opuscic program?" 0 0
     if [ $? -eq 0 ]; then
         rm -f $data_events
         rm -f $data_games
-        dialog --msgbox "Dane zostaly usuniete! Opuszczanie" 6 30
+        dialog --msgbox "Dane zostaly usuniete! Opuszczanie" 0 0
         clear
         exit
     fi
 }
 
 exit_prog() {
-    dialog --yesno "Czy na pewno opuscic program?" 6 30
+    dialog --yesno "Czy na pewno opuscic program?" 0 0
     if [ $? -eq 0 ]; then
-        dialog --msgbox "Do zobaczenia!" 6 30
+        dialog --msgbox "Do zobaczenia!" 0 0
         clear
         exit
     fi
 }
+
+main_menu
 
 clear

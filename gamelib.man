@@ -43,10 +43,10 @@ Wyjście - Zakończenie działania programu.
 Program używa plikow tymczasowych do przechowywania danych o grach i wydarzeniach:
 .TP
 /tmp/games.txt
-Plik, w którym zapisywane są dane dotyczace gier. (Format <nazwa gry> - <gatunek>)
+Plik, w którym zapisywane są dane dotyczace gier. (Format <nazwa_gry> - <gatunek>)
 .TP
 /tmp/events.txt
-Plik, w ktorym zapisywane sa dane dotyczace wydarzen. (Format <data> - <gra> - <opis wydarzenia>)
+Plik, w ktorym zapisywane sa dane dotyczace wydarzen. (Format <data> - <gra> - <opis_wydarzenia>)
 
 .SH WYJŚCIE
 Po zakończeniu programu plik tymczasowy zostanie zachowany, chyba ze uzytkownik opusci program z uzyciem opcji 'Wyczysc dane'
