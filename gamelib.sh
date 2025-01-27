@@ -1,7 +1,7 @@
 #!/bin/bash
 
-data_events=/tmp/events.txt
-data_games=/tmp/games.txt
+data_events=./temp/events.txt
+data_games=./temp/games.txt
 
 #GAMES
 
@@ -137,7 +137,6 @@ show_events() {
                     2) show_events ;;
                     *) show_events ;;
                 esac
-
             else
                 dialog --msgbox "Nie wybrano wydarzenia!" 0 0
             fi
@@ -153,7 +152,7 @@ main_menu() {
     choice=$(dialog --stdout --cancel-label "Wyjscie" --title "Menu glowne" --menu "Wybierz opcje" 0 0 0 \
         1 "Biblioteka gier" \
         2 "Kalendarz wydarzen" \
-        3 "Wyczyść dane programu" \
+        3 "Wyczysc dane programu" \
         4 "Wyjscie")
 
     case $choice in
