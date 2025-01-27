@@ -73,6 +73,7 @@ add_event() {
                 dialog --msgbox "Event added successfully!" 6 30
             else
                 dialog --msgbox "No description entered!" 6 30
+            fi
         else
             dialog --stdout --title "No game selected, input name" --inputbox "Input game name" 6 30
             if [ $? -eq 0 ]; then
