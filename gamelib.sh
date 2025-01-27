@@ -44,11 +44,11 @@ delete_game() {
 show_games() {
     games=$(cat "$data_games")
 
-    games_list=$(awk -F ' - ' '{print NR " \" $1 "\" " $2}' "$data_games" | tr '\n' ' ')
+    games_list=$(awk -F ' - ' '{print $1 " " $2}' $data_games | tr '\n' ' ')
     if [ -z "$games" ]; then
         dialog --msgbox "Nie znaleziono gier!" 0 0
     else
-        game=$(dialog --stdout --title "Gry" --menu "Wybierz gre" 0 0 0 $games_list)
+        game=$(dialog --stdout --title "Gry" --menu "Tytul | Kategoria" 0 0 0 $games_list)
         if [ $? -eq 0 ]; then
             action=$(dialog --stdout --title "$game" --menu "Wybierz opcje" 0 0 0 \
                 1 "Usun gre" \
@@ -74,7 +74,7 @@ add_event() {
         games_list=$(awk -F ' - ' '{print $1 " " $2}' $data_games | tr '\n' ' ')
 
         #Wybor gry z listy dla eventu
-        event_game=$(dialog --stdout --title "Dodaj wydarzenie" --menu "Wybierz gre" 0 0 0 $games_list)
+        event_game=$(dialog --stdout --title "Dodaj wydarzenie" --menu "Tytul | Kategoria" 0 0 0 $games_list)
         if [ $? -eq 0 ]; then
             event_desc=$(dialog --stdout --title "Dodaj wydarzenie" --inputbox "Podaj opis wydarzenia" 0 0)
             if [ $? -eq 0 ]; then
@@ -126,8 +126,7 @@ show_events() {
             dialog --msgbox "Brak wydarzen na wskazana date!" 0 0
         else
             event_list=$(echo "$events" | awk -F ' - ' '{print $3 " " $2}' | tr '\n' ' ')
-            dialog --msgbox "$event_list" 0 0
-            event=$(dialog --stdout --cancel-label "Powrot" --title "Wydarzenia" --menu "Wybierz wydarzenie" 0 0 0 $event_list)
+            event=$(dialog --stdout --cancel-label "Powrot" --title "Wybierz wydarzenie" --menu "Wydarzenie | Gra" 0 0 0 $event_list)
             if [ $? -eq 0 ]; then
                 action=$(dialog --stdout --cancel-label "Powrot" --title "$event" --menu "Wybierz opcje" 0 0 0 \
                     1 "Usun wydarzenie" \
@@ -153,7 +152,7 @@ show_events() {
 main_menu() {
     choice=$(dialog --stdout --cancel-label "Wyjscie" --title "Menu glowne" --menu "Wybierz opcje" 0 0 0 \
         1 "Biblioteka gier" \
-        2 "Kalendarz wydarzeń" \
+        2 "Kalendarz wydarzen" \
         3 "Wyczyść dane programu" \
         4 "Wyjscie")
 
@@ -221,7 +220,7 @@ clear_data() {
 exit_prog() {
     dialog --yesno "Czy na pewno opuscic program?" 0 0
     if [ $? -eq 0 ]; then
-        dialog --msgbox "Do zobaczenia!" 0 0
+        dialog --msgbox "See ya!" 0 0
         clear
         exit
     fi
