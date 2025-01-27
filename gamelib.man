@@ -1,0 +1,61 @@
+.\" Manual do programu - Obsluga systemu gier
+.TH GAMELIB 1 "January 2025" "Version 1.0" "Manual"
+.SH NAZWA
+gamelib \- Program umozliwiajacy obsluge biblioteki gier i kalendarza wydarzen do tych gier
+.SH OPIS
+Program umożliwia użytkownikowi zarzadzanie swoja biblioteka gier i kalendarzem wydarzen gier.
+W bibliotece uzytkownik moze dodac i usunac gry, a w kalendarzu dodac i usunac eventy z gier.
+Wszystkie informacje zapisywane sa w plikach /tmp/games.txt i /tmp/events.txt i przechowywane
+do momentu usuniecia ich przez uzytkownika w menu glownym.
+
+.SH UŻYTKOWANIE
+Po uruchomieniu programu użytkownik otrzymuje menu, w którym może wybrać jedną z poniższych opcji:
+
+.TP
+1
+Biblioteka gier - przejscie do menu biblioteki gier, gdzie mozna zarzadzac grami
+
+.TP
+2
+Kalenadrz wydarzen - przejscie do menu kalendarza, gdzie mozna zarzadzac eventami
+
+.TP
+3
+Wyczyść dane - usuwa dane utworzone przez program i przechowywane na dysku
+
+.TP
+4
+Wyjście - Zakończenie działania programu.
+
+.SH PRZYKŁADY
+1. Uruchomienie programu:
+   $ ./gamelib.sh
+
+2. Wybór opcji "Biblioteka gier":
+   Program przekieruje nas do menu Biblioteki gier, gdzie pozwoli nam dodac nowa gre lub nimi zarzadzac.
+   W celu dodania gry poprosi nas o podanie nazwy gry i wybranie jej gatunku z listy.
+
+3. Dodanie nowego wydarzenia:
+   Dodajac wydarzenie program poprosi nas o wybranie daty z kalendarza, po czym wskaze nam liste gier (lub poprosi
+   o wpisanie nazwy gry), nastepnie nalezy podac nazwe wydarzenia, a to zostanie zapisane do pliku.
+
+.SH ZMIENNE
+Program używa plikow tymczasowych do przechowywania danych o grach i wydarzeniach:
+.TP
+/tmp/games.txt
+Plik, w którym zapisywane są dane dotyczace gier. (Format <nazwa gry> - <gatunek>)
+.TP
+/tmp/events.txt
+Plik, w ktorym zapisywane sa dane dotyczace wydarzen. (Format <data> - <gra> - <opis wydarzenia>)
+
+.SH WYJŚCIE
+Po zakończeniu programu plik tymczasowy zostanie zachowany, chyba ze uzytkownik opusci program z uzyciem opcji 'Wyczysc dane'
+
+.SH WYMAGANIA
+Program wymaga narzędzia `dialog`.
+
+.SH AUTOR
+Wiktor Musial <uswiktormusial@gmail.com>
+
+.SH ZAKOŃCZENIE
+Aby zakończyć program, wybierz opcję "Wyjscie" z menu glownego. Program wyswietli komunikat pozegnalny i zakonczy dzialanie.
