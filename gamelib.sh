@@ -7,14 +7,14 @@ data_games=/tmp/games.txt
 add_game() {
     game_title=$(dialog --stdout --title "Add Game" --inputbox "Enter Game Title" 0 0)
     if [ $? -eq 0 ]; then
-        game_genre=$(dialog --stdout --title "Add Game" --select "Select Game Genre" 0 0 0 \
-            "Akcji" "" \
-            "Przygodowa" "" \
-            "RPG" "" \
-            "Symulator" "" \
-            "Strategia" "" \
-            "Sport" "" \
-            "Inne" "")
+        game_genre=$(dialog --stdout --title "Add Game" --menu "Select Game Genre" 0 0 0 \
+            1 "Akcji" \
+            2 "Przygodowa" \
+            3 "RPG" \
+            4 "Symulator" \
+            5 "Strategia" \
+            6 "Sport" \
+            7 "Inne")
         if [ $? -eq 0 ]; then
             echo "$game_title - $game_genre" >> $data_games
             dialog --msgbox "Game added successfully!" 6 30
@@ -38,10 +38,11 @@ delete_game() {
 
 show_games() {
     games=$(cat $data_games)
+    games_list=$(awk -F ' - ' '{print $1 " " $2}' $data_games | tr '\n' ' ')
     if [ -z "$games" ]; then
         dialog --msgbox "No games found!" 6 30
     else
-        dialog --stdout --title "Games" --select "Select Game" 0 0 0 $games
+        game=$(dialog --stdout --title "Games" --menu "Select Game" 0 0 0 $games_list)
         if [ $? -eq 0 ]; then
             action=$(dialog --stdout --title "$game" --menu "Choose an option" 0 0 0 \
                 1 "Delete Game" \
@@ -63,7 +64,8 @@ show_games() {
 add_event() {
     event_date=$(dialog --stdout --title "Add Event" --calendar "Select Date" 0 0)
     if [ $? -eq 0 ]; then
-        event_game=$(dialog --stdout --title "Add Event" --select "Select Game Name" 0 0 0 $(cat $data_games))
+        games_list=$(awk -F ' - ' '{print $1 " " $2}' $data_games | tr '\n' ' ')
+        event_game=$(dialog --stdout --title "Add Event" --menu "Select Game" 0 0 0 $games_list)
         if [ $? -eq 0 ]; then
             event_desc=$(dialog --stdout --title "Add Event" --inputbox "Enter Event Description" 0 0)
             if [ $? -eq 0 ]; then
@@ -108,7 +110,8 @@ show_events() {
         if [ -z "$events" ]; then
             dialog --msgbox "No events found for the selected date!" 6 30
         else
-            event=$(dialog --stdout --title "Events" --select "Select Event" 0 0 0 $events)
+            event_list=$(echo "$events" | awk -F ' - ' '{print $1 " " $2 " " $3}' | tr '\n' ' ')
+            event=$(dialog --stdout --title "Events" --menu "Select Event" 0 0 0 $event_list)
             if [ $? -eq 0 ]; then
                 action=$(dialog --stdout --title "$event" --menu "Choose an option" 0 0 0 \
                     1 "Delete Event" \
